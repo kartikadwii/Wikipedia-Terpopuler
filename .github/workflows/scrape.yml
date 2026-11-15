@@ -1,0 +1,61 @@
+name: Scrape top artikel Wikipedia
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+    inputs:
+      paksa:
+        description: "Paksa jalan walau belum jatuh tempo"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Pasang dependensi
+        run: pip install -r requirements.txt
+
+      - name: Jalankan scraper
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          INTERVAL_HARI: ${{ vars.INTERVAL_HARI }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+          PAKSA: ${{ inputs.paksa }}
+        run: |
+          if [ "$PAKSA" = "true" ]; then
+            python run_scrape.py --paksa
+          else
+            python run_scrape.py
+          fi
+
+      - name: Commit data bila berubah
+        if: always()
+        run: |
+          if [ -n "$(git status --porcelain -- data/top_artikel.csv)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/top_artikel.csv
+            git commit -m "data: perbarui top artikel [skip ci]"
+            git pull --rebase
+            git push
+          else
+            echo "Tidak ada perubahan data."
+          fi
