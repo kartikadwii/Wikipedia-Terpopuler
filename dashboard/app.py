@@ -55,7 +55,7 @@ tabel = tabel_harian(semua, tanggal)
 tabel = tabel[tabel["kelompok"].isin(kelompok)]
 
 st.subheader(f"Peringkat {tanggal}")
-st.dataframe(tabel, use_container_width=True, hide_index=True)
+st.dataframe(tabel, hide_index=True)
 
 st.subheader("Tren jumlah baca")
 semua_judul = sorted(set(semua["artikel"]))
