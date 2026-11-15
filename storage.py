@@ -29,7 +29,7 @@ def muat(path: Path) -> pd.DataFrame:
     path = Path(path)
     if not path.exists() or path.stat().st_size == 0:
         return _kosong()
-    df = pd.read_csv(path, encoding="utf-8", dtype={"artikel": str, "diambil_pada": str})
+    df = pd.read_csv(path, encoding="utf-8", dtype={"artikel": str, "diambil_pada": str}, keep_default_na=False)
     if df.empty:
         return _kosong()
     return _normalkan(df)

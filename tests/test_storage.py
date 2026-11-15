@@ -69,3 +69,15 @@ def test_jatuh_tempo():
     assert sudah_jatuh_tempo(date(2026, 11, 12), date(2026, 11, 15), 3)
     assert not sudah_jatuh_tempo(date(2026, 11, 12), date(2026, 11, 14), 3)
     assert sudah_jatuh_tempo(date(2026, 11, 12), date(2026, 11, 14), 2)
+
+
+def test_judul_token_na_utuh_dan_tidak_menggandakan(tmp_path):
+    f = tmp_path / "d.csv"
+    judul = ["Null", "NA", "NaN", "None", "Nan"]
+    b = _baris(*[(date(2026, 11, 14), i + 1, j, 10) for i, j in enumerate(judul)])
+    assert tambah(f, b) == 5
+    df = muat(f)
+    assert list(df["artikel"]) == judul
+    assert df["peringkat"].dtype == "int64" and df["jumlah_baca"].dtype == "int64"
+    assert tambah(f, b) == 0
+    assert len(muat(f)) == 5
