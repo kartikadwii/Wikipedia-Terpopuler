@@ -63,15 +63,18 @@ def ambil_top_artikel(
             f"untuk {tanggal.isoformat()}"
         )
 
-    daftar = resp.json()["items"][0]["articles"]
     hasil = []
-    for item in daftar:
-        judul = item["article"]
-        if not _layak(judul):
-            continue
-        hasil.append(
-            ArtikelBaca(len(hasil) + 1, judul.replace("_", " "), int(item["views"]))
-        )
-        if len(hasil) >= jumlah:
-            break
+    try:
+        daftar = resp.json()["items"][0]["articles"]
+        for item in daftar:
+            judul = item["article"]
+            if not _layak(judul):
+                continue
+            hasil.append(
+                ArtikelBaca(len(hasil) + 1, judul.replace("_", " "), int(item["views"]))
+            )
+            if len(hasil) >= jumlah:
+                break
+    except (KeyError, IndexError, TypeError, ValueError):
+        raise requests.HTTPError("Respons tidak valid dari Wikimedia") from None
     return hasil

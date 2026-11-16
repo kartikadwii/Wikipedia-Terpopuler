@@ -109,3 +109,9 @@ def test_diulang_dengan_paksa_tidak_menggandakan_data(tmp_path):
     assert k.panggilan == []
     assert len(muat(_csv(p))) == 150
     assert len(s.pesan) == 1
+
+
+def test_notifikasi_galat_apa_pun_tidak_menggagalkan(tmp_path):
+    p, k, s = _pengaturan(tmp_path), Klien(), Kirim(galat=AttributeError("rahasia-token"))
+    assert jalankan(HARI_INI, p, k, s) == 0
+    assert len(muat(_csv(p))) == 150

@@ -89,7 +89,7 @@ Catatan jujur: dasbor belum pernah dijalankan dengan Streamlit asli di lingkunga
 
 - Sumber: API publik Wikimedia Pageviews (`wikimedia.org/api/rest_v1/metrics/pageviews/top`).
 - User-Agent deskriptif yang menyebut proyek dan alamat repositori sebagai kontak.
-- Jeda 0,5 detik sebelum tiap permintaan, dan retry sampai 3 kali dengan backoff untuk status 429/5xx.
+- Jeda 0,5 detik sebelum tiap permintaan, dan 3 percobaan dengan backoff untuk status 429/5xx.
 - Hanya satu permintaan kecil per tanggal (maksimal 7 per run).
 - Hormati kebijakan penggunaan API Wikimedia.
 - Data berupa statistik agregat judul artikel, bukan data pribadi.

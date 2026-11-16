@@ -9,7 +9,7 @@ import requests
 
 from analysis import ringkas_putaran
 from config import NAMA_CSV, Pengaturan, ambil_pengaturan
-from notifier import NotifikasiGagal, kirim_pesan, susun_pesan, susun_pesan_gagal
+from notifier import kirim_pesan, susun_pesan, susun_pesan_gagal
 from storage import (
     KOLOM,
     muat,
@@ -27,8 +27,10 @@ log = logging.getLogger(__name__)
 def _kirim_aman(kirim, teks: str, pengaturan: Pengaturan) -> None:
     try:
         kirim(teks, pengaturan.bot_token, pengaturan.chat_id)
-    except NotifikasiGagal:
-        log.warning("Notifikasi gagal terkirim; data tetap tersimpan.")
+    except Exception as exc:
+        log.warning(
+            "Notifikasi gagal terkirim (%s); data tetap tersimpan.", type(exc).__name__
+        )
 
 
 def jalankan(

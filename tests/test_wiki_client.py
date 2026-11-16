@@ -98,3 +98,10 @@ def test_user_agent_dikirim():
     sesi = SesiPalsu(ResponPalsu(200, _payload(["Bali"])))
     _ambil(sesi)
     assert sesi.panggilan[0]["headers"]["User-Agent"] == "UA-uji/1.0"
+
+
+@pytest.mark.parametrize("data", [{"items": []}, {}, None, {"items": [{}]}])
+def test_payload_tidak_valid_jadi_http_error(data):
+    sesi = SesiPalsu(ResponPalsu(200, data))
+    with pytest.raises(requests.RequestException):
+        _ambil(sesi)
