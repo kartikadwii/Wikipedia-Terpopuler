@@ -61,39 +61,4 @@ Langkah berikut harus dikerjakan sendiri di akun GitHub, Telegram, dan Streamlit
 3. Jalankan lagi tanpa `paksa`. Hasil yang diharapkan: tidak ada commit baru dan tidak ada pesan (belum jatuh tempo).
 4. Catatan: bila data sudah mutakhir, run paksa berikutnya juga tidak menghasilkan pesan. Pemeriksaan deploy yang menghasilkan pesan hanya run paksa pertama pada data kosong.
 
-## Menjalankan secara lokal
 
-```bash
-pip install -r requirements.txt
-python -m pytest                      # tes berjalan offline (tanpa jaringan)
-export BOT_TOKEN=... CHAT_ID=...      # nilai Anda sendiri
-python run_scrape.py                  # tambahkan --paksa untuk melewati pemeriksaan jatuh tempo
-streamlit run dashboard/app.py
-```
-
-`USER_AGENT`, `INTERVAL_HARI`, `DASHBOARD_URL`, dan `DATA_DIR` bisa diatur juga lewat variabel lingkungan; contohnya di `.env.example`. Tes dasbor (`tests/test_dashboard.py`) dilewati otomatis bila `streamlit` tidak terpasang.
-
-Catatan jujur: dasbor belum pernah dijalankan dengan Streamlit asli di lingkungan pengembangan. Ia hanya diverifikasi dengan harness palsu, dan tes AppTest akan berjalan bila streamlit terpasang. Perlu dicek saat deploy pertama.
-
-## Batas yang diketahui
-
-- Jadwal GitHub Actions bisa tertunda atau terlewat.
-- Workflow terjadwal dinonaktifkan GitHub setelah 60 hari repositori tanpa aktivitas; aktifkan kembali secara manual di tab Actions.
-- Dasbor Streamlit Community Cloud tidur setelah 12 jam tanpa pengunjung; bangunkan dengan satu klik sebelum presentasi.
-- Jumlah baca adalah jumlah permintaan halaman, bukan orang unik.
-- Tanggal yang gagal atau belum tersedia (404) dilewati dan tidak otomatis diulang bila tanggal sesudahnya berhasil; tanggal itu dicatat di pesan Telegram ("Tanggal dilewati"). Bila semua tanggal gagal, run keluar dengan kode 1 dan mengirim pesan gagal.
-- Bot tidak interaktif: perintah seperti `/terpopuler` dan `/ambil` di luar cakupan. Bot hanya mengirim pesan.
-- Kegagalan mengirim Telegram tidak menggagalkan run; data tetap tersimpan.
-
-## Etika pengambilan data
-
-- Sumber: API publik Wikimedia Pageviews (`wikimedia.org/api/rest_v1/metrics/pageviews/top`).
-- User-Agent deskriptif yang menyebut proyek dan alamat repositori sebagai kontak.
-- Jeda 0,5 detik sebelum tiap permintaan, dan 3 percobaan dengan backoff untuk status 429/5xx.
-- Hanya satu permintaan kecil per tanggal (maksimal 7 per run).
-- Hormati kebijakan penggunaan API Wikimedia.
-- Data berupa statistik agregat judul artikel, bukan data pribadi.
-
-## Pernyataan penggunaan AI
-
-Proyek ini dikerjakan dengan bantuan Claude, asisten AI. Kode ditinjau dan diuji; manusia yang menjalankan proyek ini bertanggung jawab atas isi dan penggunaannya.
